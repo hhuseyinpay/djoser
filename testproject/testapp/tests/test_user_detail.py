@@ -27,11 +27,11 @@ class UserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
 
         self.assert_status_equal(response, status.HTTP_200_OK)
 
-    def test_user_cannot_get_other_user_detail(self):
+    def test_user_can_get_other_user_detail(self):
         login_user(self.client, self.user)
         response = self.client.get(reverse("user-detail", args=[self.superuser.pk]))
 
-        self.assert_status_equal(response, status.HTTP_404_NOT_FOUND)
+        self.assert_status_equal(response, status.HTTP_200_OK)
 
     def test_superuser_can_get_other_user_detail(self):
         login_user(self.client, self.superuser)

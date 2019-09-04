@@ -22,7 +22,7 @@ class SetPasswordViewTest(
         data = {"new_password": "new password", "current_password": "secret"}
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
@@ -34,7 +34,7 @@ class SetPasswordViewTest(
         data = {"new_password": "new password", "current_password": "wrong"}
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -48,7 +48,7 @@ class SetPasswordViewTest(
         }
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
@@ -63,7 +63,7 @@ class SetPasswordViewTest(
         }
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -78,7 +78,7 @@ class SetPasswordViewTest(
         data = {"new_password": "new password", "current_password": "secret"}
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
@@ -89,7 +89,7 @@ class SetPasswordViewTest(
         data = {"new_password": "new password", "current_password": "secret"}
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
@@ -103,7 +103,7 @@ class SetPasswordViewTest(
         data = {"new_password": "new password", "current_password": "secret"}
         login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()

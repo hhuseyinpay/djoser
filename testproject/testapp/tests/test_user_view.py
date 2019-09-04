@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from .common import create_user
+from .common import create_user, login_user
 
 User = get_user_model()
 
@@ -16,10 +16,10 @@ class UserViewTest(
 ):
     def setUp(self):
         self.user = create_user()
-        self.client.force_authenticate(user=self.user)
         self.url = reverse("user-detail", kwargs={"pk": self.user.pk})
 
     def test_get_return_user(self):
+        login_user(self.client, self.user)
         response = self.client.get(self.url)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
@@ -32,6 +32,7 @@ class UserViewTest(
     def test_email_change_with_send_activation_email_false(self):
         data = {"email": "ringo@beatles.com"}
 
+        login_user(self.client, self.user)
         response = self.client.put(self.url, data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
@@ -43,6 +44,7 @@ class UserViewTest(
     def test_email_change_with_send_activation_email_true(self):
         data = {"email": "ringo@beatles.com"}
 
+        login_user(self.client, self.user)
         response = self.client.put(self.url, data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
@@ -64,12 +66,11 @@ class UserViewTest(
         data = {"email": "ringo@beatles.com"}
         url = reverse("user-detail", kwargs={"pk": other_user.pk})
 
-        response = self.client.get(self.url)
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        response2 = self.client.get(url)
-        self.assert_status_equal(response2, status.HTTP_403_FORBIDDEN)
-        response3 = self.client.put(url, data=data)
-        self.assert_status_equal(response3, status.HTTP_403_FORBIDDEN)
+        login_user(self.client, self.user)
+        response1 = self.client.put(url, data=data)
+        self.assert_status_equal(response1, status.HTTP_403_FORBIDDEN)
+        response2 = self.client.get(self.url)
+        self.assert_status_equal(response2, status.HTTP_200_OK)
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"HIDE_USERS": True}))
     def test_fail_404_without_permission(self):
@@ -83,9 +84,8 @@ class UserViewTest(
         data = {"email": "ringo@beatles.com"}
         url = reverse("user-detail", kwargs={"pk": other_user.pk})
 
-        response = self.client.get(self.url)
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        response2 = self.client.get(url)
-        self.assert_status_equal(response2, status.HTTP_404_NOT_FOUND)
-        response3 = self.client.put(url, data=data)
-        self.assert_status_equal(response3, status.HTTP_404_NOT_FOUND)
+        login_user(self.client, self.user)
+        response1 = self.client.put(url, data=data)
+        self.assert_status_equal(response1, status.HTTP_404_NOT_FOUND)
+        response2 = self.client.get(self.url)
+        self.assert_status_equal(response2, status.HTTP_200_OK)
